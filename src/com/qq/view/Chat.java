@@ -1,8 +1,12 @@
 package com.qq.view;
 /*
  * 聊天界面
+ * the chat must be loading message unstopably
  */
 import javax.swing.*;
+
+import com.qq.client.model.ConnectToServer;
+import com.qq.common.Message;
 
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -13,16 +17,27 @@ import java.awt.Toolkit;
 import java.awt.event.*;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
-public class Chat extends JFrame{
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+public class Chat extends JFrame implements MouseListener ,Runnable{
 	
 	JTextField textField;
 	JTextArea textArea;
 	JButton sendButton;
 	JPanel panel;
-	public Chat(){
+	
+	private String UserName;
+	private String FriendName;
+	
+	public Chat(String user,String friend){
+		UserName = user;
+		FriendName = friend;
+		
 		textArea = new JTextArea();
 		textField = new JTextField(15);
 		sendButton = new JButton("发送");
+		sendButton.addMouseListener(this);
 		panel = new JPanel(/*new GridLayout(1, 2)*/);
 		panel.add(textField);
 		panel.add(sendButton);
@@ -33,18 +48,97 @@ public class Chat extends JFrame{
 		Toolkit tk=Toolkit.getDefaultToolkit();
 		Image img=tk.getImage("image/qq.gif"); /*mouse.gif是你的图标*/
 		Cursor cu=tk.createCustomCursor(img,new Point(10,10),"stick");
-		this.setCursor(cu);
+		this.setIconImage(img);
 		//Image image = (new ImageIcon(getClass().getResource("image/qq.gif")).getImage());
 		//this.setIconImage(image);
-		this.setTitle("Chating!");
+		this.setTitle(user +" Chating with " + friend +" !");
 		this.setSize(400,300);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 	}
 	
-	static public void main(String []args){
-		Chat chat = new Chat();
+	public String getUserName() {
+		return UserName;
 	}
+
+	public void setUserName(String userName) {
+		UserName = userName;
+	}
+
+	public String getFriendName() {
+		return FriendName;
+	}
+
+	public void setFriendName(String friendName) {
+		FriendName = friendName;
+	}
+	static public void main(String []args){
+		Chat chat = new Chat("p","q");
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		Message message = new Message(textField.getText(), UserName, FriendName);
+		try {
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+					ConnectToServer.getSocket().getOutputStream());
+			objectOutputStream.writeObject(message);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		//message.setSendTime(sendTime);
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+		while(true){
+			try {
+				//waiting for message
+				ObjectInputStream objectInputStream = new ObjectInputStream(
+						ConnectToServer.getSocket().getInputStream());
+				Message message = (Message)objectInputStream.readObject();
+				String info = "From " + message.getSenderName() + " to " + message.getReceiverName() 
+										+" in "+ message.getSendTime() +":\n"
+										+message.getMessage() + "\r\n";
+				textArea.append(info);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 
 }
