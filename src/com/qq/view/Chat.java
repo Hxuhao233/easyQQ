@@ -6,6 +6,8 @@ package com.qq.view;
 import javax.swing.*;
 
 import com.qq.client.model.ConnectToServer;
+import com.qq.client.tools.ConnectToServerThread;
+import com.qq.client.tools.ConnectToServerThreadManager;
 import com.qq.common.Message;
 
 import java.awt.Cursor;
@@ -20,7 +22,7 @@ import java.awt.image.ImageProducer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-public class Chat extends JFrame implements MouseListener ,Runnable{
+public class Chat extends JFrame implements MouseListener{
 	
 	JTextField textField;
 	JTextArea textArea;
@@ -83,7 +85,7 @@ public class Chat extends JFrame implements MouseListener ,Runnable{
 		Message message = new Message(textField.getText(), UserName, FriendName);
 		try {
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(
-					ConnectToServer.getSocket().getOutputStream());
+					ConnectToServerThreadManager.getThread(UserName).getSocket().getOutputStream());
 			objectOutputStream.writeObject(message);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -114,30 +116,6 @@ public class Chat extends JFrame implements MouseListener ,Runnable{
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-		while(true){
-			try {
-				//waiting for message
-				ObjectInputStream objectInputStream = new ObjectInputStream(
-						ConnectToServer.getSocket().getInputStream());
-				Message message = (Message)objectInputStream.readObject();
-				String info = "From " + message.getSenderName() + " to " + message.getReceiverName() 
-										+" in "+ message.getSendTime() +":\n"
-										+message.getMessage() + "\r\n";
-				textArea.append(info);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 	}
 
 

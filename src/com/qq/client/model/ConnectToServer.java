@@ -9,17 +9,20 @@ import java.net.UnknownHostException;
 
 import org.omg.CORBA.PUBLIC_MEMBER;
 
+import com.qq.client.tools.ConnectToServerThread;
+import com.qq.client.tools.ConnectToServerThreadManager;
 import com.qq.common.Message;
+import com.qq.common.User;
 
 /*
  * client connect to server
  */
 public class ConnectToServer{
-	private static Socket socket ;
-public static Socket getSocket() {
+	private  Socket socket ;
+public  Socket getSocket() {
 		return socket;
 	}
-public static void closeSocket(){
+public  void closeSocket(){
 	if(socket.isConnected())
 		try {
 			socket.close();
@@ -52,6 +55,11 @@ public ConnectToServer() throws UnknownHostException, IOException{
 		Message message = (Message)objectInputStream.readObject();
 		
 		if(message.getMessageType().equals("1")){
+			//starts a Thread for this client to server
+			ConnectToServerThread connectToServerThread = 
+					new ConnectToServerThread(socket);
+			connectToServerThread.start();
+			ConnectToServerThreadManager.addThread(((User)o).getQQNumber(), connectToServerThread);
 			bool = true;
 		}
 		return bool;

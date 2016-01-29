@@ -67,8 +67,7 @@ public class FriendList extends JFrame{
 							String friendNumber = ((JLabel)e.getSource()).getText();
 							System.out.println("chat with " + friendNumber);
 							Chat chat  = new Chat(QQNumber.trim(),friendNumber.trim());
-							Thread thread = new Thread(chat);
-							thread.start();
+
 					}
 					
 				}
@@ -106,6 +105,8 @@ public class FriendList extends JFrame{
 	
 	
 	static public void main(String []args){
-		//FriendList visibleList = new FriendList();
+		FriendList visibleList = new FriendList("1");
+		FriendList visibleList1 = new FriendList("2");
+		FriendList visibleList2 = new FriendList("3");
 }
 }
