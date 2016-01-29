@@ -11,4 +11,7 @@ public class ConnectToServerThreadManager {
 	public static ConnectToServerThread getThread(String QQnumber){
 		return (ConnectToServerThread)hashMap.get(QQnumber);
 	}
+	public static void Delete(String QQnumber){
+		hashMap.remove(QQnumber);
+	}
 }

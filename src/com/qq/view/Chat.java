@@ -1,7 +1,7 @@
 package com.qq.view;
 /*
  * 聊天界面
- * the chat must be loading message unstopably
+ * 
  */
 import javax.swing.*;
 
@@ -56,8 +56,15 @@ public class Chat extends JFrame implements MouseListener{
 		this.setTitle(user +" Chating with " + friend +" !");
 		this.setSize(400,300);
 		this.setVisible(true);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+	}
+	
+	public void showNewMessage(Message message){
+		String info = "From " + message.getSenderName() + " to " + message.getReceiverName() 
+		+" in "+ message.getSendTime() +":\n"
+		+message.getMessage() + "\r\n";
+		textArea.append(	info);
 	}
 	
 	public String getUserName() {
@@ -83,13 +90,23 @@ public class Chat extends JFrame implements MouseListener{
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		Message message = new Message(textField.getText(), UserName, FriendName);
+		ObjectOutputStream objectOutputStream = null;
 		try {
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+			objectOutputStream = new ObjectOutputStream(
 					ConnectToServerThreadManager.getThread(UserName).getSocket().getOutputStream());
 			objectOutputStream.writeObject(message);
+			objectOutputStream.close();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		}finally{
+			if(objectOutputStream!=null)
+				try {
+					objectOutputStream.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 		}
 		//message.setSendTime(sendTime);
 	}
