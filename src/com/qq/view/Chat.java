@@ -95,18 +95,12 @@ public class Chat extends JFrame implements MouseListener{
 			objectOutputStream = new ObjectOutputStream(
 					ConnectToServerThreadManager.getThread(UserName).getSocket().getOutputStream());
 			objectOutputStream.writeObject(message);
-			objectOutputStream.close();
+		//	objectOutputStream.close();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}finally{
-			if(objectOutputStream!=null)
-				try {
-					objectOutputStream.close();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+		
 		}
 		//message.setSendTime(sendTime);
 	}

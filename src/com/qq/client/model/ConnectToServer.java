@@ -61,6 +61,7 @@ public ConnectToServer() throws UnknownHostException, IOException{
 			connectToServerThread.start();
 			ConnectToServerThreadManager.addThread(((User)o).getQQNumber(), connectToServerThread);
 			bool = true;
+			System.out.println("Connect to server!!!");
 		}
 		return bool;
 	}

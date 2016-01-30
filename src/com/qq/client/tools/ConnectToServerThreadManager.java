@@ -13,5 +13,6 @@ public class ConnectToServerThreadManager {
 	}
 	public static void Delete(String QQnumber){
 		hashMap.remove(QQnumber);
+		
 	}
 }

@@ -96,8 +96,9 @@ public class FriendList extends JFrame{
 		
 		this.addWindowListener(new WindowAdapter() {
 			public void WindowClosing(WindowEvent e){
-				//super.windowClosing(e);
+				super.windowClosing(e);
 				ConnectToServerThreadManager.Delete(QQNumber);
+				
 			}
 		});
 		this.add(totalPanel,"Center");
@@ -114,18 +115,19 @@ public class FriendList extends JFrame{
 			objectOutputStream = new ObjectOutputStream(
 					ConnectToServerThreadManager.getThread(QQNumber).getSocket().getOutputStream());
 			objectOutputStream.writeObject(message);
-			objectOutputStream.close();
+			//objectOutputStream.close();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}finally{
-			if(objectOutputStream!=null)
-				try {
-					objectOutputStream.close();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+//			if(objectOutputStream!=null)
+//				try {
+//					objectOutputStream.close();
+//				} catch (IOException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+
 		}
 	}
 	public String getQQNumber() {
