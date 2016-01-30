@@ -7,7 +7,14 @@ import java.awt.GridLayout;
  * 联系人列表
  */
 import java.awt.event.*;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
 import javax.swing.*;
+
+import com.qq.client.tools.ChatManager;
+import com.qq.client.tools.ConnectToServerThreadManager;
+import com.qq.common.Message;
 
 public class FriendList extends JFrame{
 	JScrollPane totalList;
@@ -29,7 +36,7 @@ public class FriendList extends JFrame{
 	
 		JLabel []jbLabels = new JLabel[50];
 		for(int i =0;i<jbLabels.length;i++){
-			jbLabels[i] = new JLabel(i+1+"", new ImageIcon("image/mm.jpg"), JLabel.LEFT);
+			jbLabels[i] = new JLabel(String.valueOf(i+1), new ImageIcon("image/mm.jpg"), JLabel.LEFT);
 			visibleList.add(jbLabels[i]);
 			jbLabels[i].addMouseListener(new MouseListener() {
 				
@@ -66,9 +73,9 @@ public class FriendList extends JFrame{
 					if(e.getClickCount() == 2){
 							String friendNumber = ((JLabel)e.getSource()).getText();
 							System.out.println("chat with " + friendNumber);
-							Chat chat  = new Chat(QQNumber.trim(),friendNumber.trim());
-							Thread thread = new Thread(chat);
-							thread.start();
+							Chat chat  = new Chat(QQNumber,friendNumber);
+							ChatManager.addChat(QQNumber+"  "+friendNumber, chat);
+							System.out.println(QQNumber+"  "+friendNumber);
 					}
 					
 				}
@@ -87,12 +94,39 @@ public class FriendList extends JFrame{
 		unvisibleList.add(blackButton);
 		totalPanel.add(unvisibleList,"South");
 		
-		
+		this.addWindowListener(new WindowAdapter() {
+			public void WindowClosing(WindowEvent e){
+				//super.windowClosing(e);
+				ConnectToServerThreadManager.Delete(QQNumber);
+			}
+		});
 		this.add(totalPanel,"Center");
 		this.setTitle(QQnumber );
 		this.setSize(140, 400);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
+	}
+	public void closeThread(){
+		Message message = new Message();
+		message.setMessageType("4");
+		ObjectOutputStream objectOutputStream = null;
+		try {
+			objectOutputStream = new ObjectOutputStream(
+					ConnectToServerThreadManager.getThread(QQNumber).getSocket().getOutputStream());
+			objectOutputStream.writeObject(message);
+			objectOutputStream.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}finally{
+			if(objectOutputStream!=null)
+				try {
+					objectOutputStream.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		}
 	}
 	public String getQQNumber() {
 		return QQNumber;
@@ -106,6 +140,8 @@ public class FriendList extends JFrame{
 	
 	
 	static public void main(String []args){
-		//FriendList visibleList = new FriendList();
+		FriendList visibleList = new FriendList("1");
+		FriendList visibleList1 = new FriendList("2");
+		FriendList visibleList2 = new FriendList("3");
 }
 }
