@@ -9,6 +9,7 @@ import com.qq.client.model.ConnectToServer;
 import com.qq.client.tools.ConnectToServerThread;
 import com.qq.client.tools.ConnectToServerThreadManager;
 import com.qq.common.Message;
+import com.qq.common.MessageType;
 
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -90,6 +91,7 @@ public class Chat extends JFrame implements MouseListener{
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		Message message = new Message(textField.getText(), UserName, FriendName);
+		message.setMessageType(MessageType.NormalMessage);
 		ObjectOutputStream objectOutputStream = null;
 		try {
 			objectOutputStream = new ObjectOutputStream(

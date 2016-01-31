@@ -4,6 +4,8 @@ package com.qq.common;
  * 1->succeed in login
  * 2->failed in login
  * 3->normal message
+ * 4->get online-friend
+ * 5->return online-friend
  */
 
 import java.util.Date;

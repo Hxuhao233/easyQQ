@@ -56,11 +56,14 @@ public ConnectToServer() throws UnknownHostException, IOException{
 		
 		if(message.getMessageType().equals("1")){
 			//starts a Thread for this client to server
+			if(socket.isClosed()){
+				System.out.println("socket is close in ConnectToServer");
+			}
 			ConnectToServerThread connectToServerThread = 
 					new ConnectToServerThread(socket);
 			connectToServerThread.start();
 			ConnectToServerThreadManager.addThread(((User)o).getQQNumber(), connectToServerThread);
-			bool = true;
+			bool = true;		
 			System.out.println("Connect to server!!!");
 		}
 		return bool;

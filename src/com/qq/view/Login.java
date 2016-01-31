@@ -12,6 +12,9 @@ import java.awt.GridLayout;
 import java.awt.event.*;
 
 import com.qq.client.model.ClientUser;
+import com.qq.client.tools.ConnectToServerThread;
+import com.qq.client.tools.ConnectToServerThreadManager;
+import com.qq.client.tools.FriendListManager;
 import com.qq.common.*;
 public class Login extends JFrame implements MouseListener{
 	//north side
@@ -100,8 +103,21 @@ public class Login extends JFrame implements MouseListener{
 		ClientUser user = new ClientUser();
 			try {
 				if(user.CheckLogin(userInfo)){
-					//String userName = user.
+					if(ConnectToServerThreadManager.getThread(QQNumberText.getText()).getSocket().isClosed()){
+						System.out.println("socket is close in Login");
+					}
 					FriendList friendList = new FriendList(QQNumberText.getText());
+					FriendListManager.addFriendList(QQNumberText.getText(), friendList);
+					//send the message to get the online-friends
+					ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+							ConnectToServerThreadManager.getThread(QQNumberText.getText())
+							.getSocket().getOutputStream());
+					Message message = new Message();
+					message.setSenderName(QQNumberText.getText());;
+					message.setMessageType(MessageType.GetOnlineFriendsMessage);
+					objectOutputStream.writeObject(message);
+					
+					
 					this.dispose();
 				}else{
 					JOptionPane.showMessageDialog(this, "The QQ Number or Password is wrong!");

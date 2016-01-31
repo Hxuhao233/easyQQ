@@ -20,7 +20,7 @@ public class FriendList extends JFrame{
 	JScrollPane totalList;
 	JButton friendButton,unknownButton,blackButton;
 	JPanel totalPanel,visibleList,unvisibleList;
-
+	JLabel []friends; 
 	private String QQNumber;
 	
 	public FriendList(String QQnumber){
@@ -34,11 +34,16 @@ public class FriendList extends JFrame{
 		blackButton = new JButton("黑名单");
 	//	visibleList.setPreferredSize(new Dimension(140, 3000));
 	
-		JLabel []jbLabels = new JLabel[50];
-		for(int i =0;i<jbLabels.length;i++){
-			jbLabels[i] = new JLabel(String.valueOf(i+1), new ImageIcon("image/mm.jpg"), JLabel.LEFT);
-			visibleList.add(jbLabels[i]);
-			jbLabels[i].addMouseListener(new MouseListener() {
+		friends = new JLabel[50];
+		for(int i =0;i<friends.length;i++){
+			friends[i] = new JLabel(String.valueOf(i+1), new ImageIcon("image/mm.jpg"), JLabel.LEFT);
+			if(String.valueOf(i+1).equals(QQNumber)){
+				friends[i].setEnabled(true);
+			}else{
+				friends[i].setEnabled(false);	
+			}
+			visibleList.add(friends[i]);
+			friends[i].addMouseListener(new MouseListener() {
 				
 				@Override
 				public void mouseReleased(MouseEvent e) {
@@ -138,12 +143,27 @@ public class FriendList extends JFrame{
 	public void setQQNumber(String qQNumber) {
 		QQNumber = qQNumber;
 	}
+	public void updateOnlineFriends(Message message){
+		String onlineFriendsQQNumber = message.getMessage();
+		System.out.println("length"+ onlineFriendsQQNumber.length());
+		onlineFriendsQQNumber = 
+				onlineFriendsQQNumber.substring(1);
+		String friendsQQNumber [] = onlineFriendsQQNumber.split(" ");
+		//System.out.println("Friends:"+friendsQQNumber[0] + " " + friendsQQNumber[1]);
+		System.out.println("first :" + Integer.valueOf(friendsQQNumber[0].trim()));
+		for(int i = 0;i<friendsQQNumber.length;i++){
+			friends[Integer.valueOf(friendsQQNumber[i].trim())-1].setEnabled(true);
+		}
+	}
 
 	
 	
 	static public void main(String []args){
 		FriendList visibleList = new FriendList("1");
-		FriendList visibleList1 = new FriendList("2");
-		FriendList visibleList2 = new FriendList("3");
+		Message message = new Message();
+		message.setMessage(" 1 2 3 ");
+		visibleList.updateOnlineFriends(message);
+	//	FriendList visibleList1 = new FriendList("2");
+	//	FriendList visibleList2 = new FriendList("3");
 }
 }
